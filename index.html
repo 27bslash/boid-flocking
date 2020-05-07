@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Boids</title>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <script src="boid.js"></script>
+    <script src="predator.js"></script>
+    <script src="quadtree.js"></script>
+    <script src="sketch.js"></script>
+    <h3 id="fps"></h3>
+    <div id="control">
+      <button onclick="dropDown()">
+        dropdown
+      </button>
+      <button class="toggle-button" onclick="toggle('debug')">D</button>
+      <input
+        type="range"
+        min="0"
+        max="5"
+        value="0"
+        step="1"
+        oninput="addPredators(this.value)"
+        class="slider"
+        id="predatorSlider"
+      />
+      <h3 class="debug-info" id="debug"></h3>
+      <input
+        type="range"
+        min="0"
+        max="4"
+        value="0"
+        oninput="fovChange(this.value)"
+        class="slider"
+        step="0.001"
+        id="fovSlider"
+      />
+      <input
+        type="range"
+        min="0"
+        max="5"
+        value="0"
+        class="slider"
+        id="speedSlider"
+      />
+      <button class="toggle-button" onclick="toggle('walls')">walls</button>
+      <button class="toggle-button" onclick="toggle('vf')">
+        V Flocking
+      </button>
+    </div>
+  </body>
+</html>

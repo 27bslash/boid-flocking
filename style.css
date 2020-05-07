@@ -1,0 +1,36 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#fps {
+  position: absolute;
+  top: 2.5%;
+  left: 9%;
+  z-index: 5;
+  color: yellow;
+}
+#control {
+  position: absolute;
+  top: 5%;
+  right: 9%;
+}
+.slider {
+  display: none;
+  position: relative;
+}
+.toggle-button {
+  display: none;
+}
+.show {
+  display: block;
+}
+.debug-info {
+  color: white;
+}
