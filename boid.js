@@ -1,3 +1,4 @@
+let neighbours = [];
 class Boid {
   constructor(x, y) {
     this.pos = createVector(x, y);
@@ -11,11 +12,11 @@ class Boid {
     this.ARC_ANGLE = +fovValue;
     this.saturation;
   }
-  run(boids) {
+  run(boids, quadtree) {
     this.update();
     this.borders();
     this.walls();
-    this.flock(boids);
+    this.flock(boids, quadtree);
     this.show();
   }
   update() {
@@ -24,7 +25,22 @@ class Boid {
     this.pos.add(this.velocity);
     this.acceleration.mult(0);
   }
-  flock(boids) {
+  flock(boids, quadtree) {
+    let range = new Rectangle(
+      this.pos.x,
+      this.pos.y,
+      this.ARC_RADIUS,
+      this.ARC_RADIUS
+    );
+    neighbours = [];
+    let neighboursInRadius = quadtree.query(range);
+    for (let point of neighboursInRadius) {
+      let other = point.userData;
+      let d = this.pos.dist(other.pos);
+      if (d > 0 && d < this.ARC_RADIUS) {
+        neighbours.push(other);
+      }
+    }
     let cohesion = this.cohesion(boids);
     let separation = this.separation(boids);
     let align = this.align(boids);
@@ -91,12 +107,11 @@ class Boid {
     steer.limit(this.maxForce);
     return steer;
   }
-  cohesion(boids) {
+  cohesion() {
     let sum = createVector(0, 0),
       count = 0,
       vFov = fovValue;
-
-    for (let other of boids) {
+    for (let other of neighbours) {
       let d = p5.Vector.dist(this.pos, other.pos),
         arcCollision = collidePointArc(
           other.pos.x,
@@ -123,12 +138,13 @@ class Boid {
       return createVector(0, 0);
     }
   }
-  align(boids) {
+
+  align() {
     let count = 0,
       sum = createVector(0, 0),
       steer,
       vFov = fovValue;
-    for (let other of boids) {
+    for (let other of neighbours) {
       let d = p5.Vector.dist(this.pos, other.pos),
         arcCollision = collidePointArc(
           other.pos.x,
@@ -159,14 +175,14 @@ class Boid {
     }
   }
 
-  separation(boids) {
+  separation() {
     let sum = createVector(0, 0),
       count = 0,
       distance = 25,
       maxForceMult = 1.5,
       vFov = fovValue;
     if (vFlocking) vFov = 5.82;
-    for (let other of boids) {
+    for (let other of neighbours) {
       let arcCollision = collidePointArc(
           other.pos.x,
           other.pos.y,

@@ -1,16 +1,19 @@
 let flock = [],
   predators = [],
-  numOfBoids = 50,
+  numOfBoids = 500,
   numOfPredators = 0,
   fovValue = 0,
   debugging = false,
   vFlocking = false,
   walls = false,
-  lastLoop = new Date();
+  lastLoop = new Date(),
+  boundary,
+  qt;
 // TODO quadtree query
 function setup() {
-  createCanvas(900, 900);
+  createCanvas(1600, 900);
   frameRate(60);
+
   for (let i = 0; i < numOfBoids; i++) {
     flock.push(new Boid(random(100, width - 100), random(100, height - 100)));
   }
@@ -18,7 +21,6 @@ function setup() {
     predators.push(new Predator(random(width), random(height)));
   }
 }
-function clear() {}
 function dropDown() {
   let c = document.getElementById("control").children;
   for (item of c) {
@@ -83,15 +85,15 @@ function draw() {
   lastLoop = thisLoop;
   fps = Math.floor(fps);
   colorMode(RGB);
-  background(0, 0, 0, 20);
-  noStroke();
+  background(0, 0, 0, 40);
+  stroke(0, 255, 0);
   addPredators();
-  let boundary = new Rectangle(width / 2, height / 2, width / 2, height / 2);
-  let qt = new QuadTree(boundary);
+  boundary = new Rectangle(width / 2, height / 2, width / 2, height / 2);
+  qt = new QuadTree(boundary);
   for (boid of flock) {
-    boid.run(flock);
-    qt.insert(boid.pos);
-    qt.show();
+    let point = new Point(boid.pos.x, boid.pos.y, boid);
+    qt.insert(point);
+    // qt.show();
     for (pred of predators) {
       boid.flee(pred);
       pred.target(boid);
@@ -101,6 +103,8 @@ function draw() {
     pred.run(predators);
     pred.flee(predators);
   }
-
+  for (boid of flock) {
+    boid.run(flock, qt);
+  }
   document.getElementById("fps").textContent = `FPS: ${fps}`;
 }
