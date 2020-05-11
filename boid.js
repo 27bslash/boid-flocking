@@ -9,7 +9,6 @@ class Boid {
     this.maxForce = 0.1;
     this.ARC_RADIUS = 50;
     this.ROTATION_ANGLE = 0;
-    this.ARC_ANGLE = +fovValue;
     this.saturation;
   }
   run(boids, quadtree) {
@@ -69,7 +68,7 @@ class Boid {
         this.pos.y,
         this.ARC_RADIUS,
         this.ROTATION_ANGLE,
-        +fovValue
+        +fovRads
       )
     ) {
       desired.normalize();
@@ -80,10 +79,7 @@ class Boid {
   walls() {
     if (walls) {
       let dist = this.ARC_RADIUS;
-      let cent = createVector(
-        random(dist, width - dist),
-        random(dist, height - dist)
-      );
+      let cent = createVector(random(0, width), random(0, height));
       if (
         this.pos.x <= dist ||
         this.pos.y <= dist ||
@@ -94,7 +90,7 @@ class Boid {
         desired.normalize();
         desired.mult(this.maxSpeed);
         let steer = p5.Vector.sub(desired, this.velocity);
-        steer.limit(this.maxForce * 3);
+        steer.limit(this.maxForce * 10);
         this.applyForce(steer);
       }
     }
@@ -110,7 +106,7 @@ class Boid {
   cohesion() {
     let sum = createVector(0, 0),
       count = 0,
-      vFov = fovValue;
+      vFov = fovRads;
     for (let other of neighbours) {
       let d = p5.Vector.dist(this.pos, other.pos),
         arcCollision = collidePointArc(
@@ -143,7 +139,7 @@ class Boid {
     let count = 0,
       sum = createVector(0, 0),
       steer,
-      vFov = fovValue;
+      vFov = fovRads;
     for (let other of neighbours) {
       let d = p5.Vector.dist(this.pos, other.pos),
         arcCollision = collidePointArc(
@@ -180,7 +176,7 @@ class Boid {
       count = 0,
       distance = 25,
       maxForceMult = 1.5,
-      vFov = fovValue;
+      vFov = fovRads;
     if (vFlocking) vFov = 5.82;
     for (let other of neighbours) {
       let arcCollision = collidePointArc(
@@ -190,7 +186,7 @@ class Boid {
           this.pos.y,
           this.ARC_RADIUS,
           this.ROTATION_ANGLE,
-          fovValue
+          fovRads
         ),
         vFlockingCollision = collidePointArc(
           other.pos.x,
@@ -224,9 +220,7 @@ class Boid {
   show() {
     let theta = this.velocity.heading() + radians(90),
       cx,
-      cy,
-      fovDegrees = (2 * PI - fovValue) * 57.3;
-    if (fovDegrees > 360) fovDegrees = 360;
+      cy
     if (walls) {
       cx = constrain(this.pos.x, this.r, width - this.r);
       cy = constrain(this.pos.y, this.r, height - this.r);
@@ -234,9 +228,9 @@ class Boid {
       cx = this.pos.x;
       cy = this.pos.y;
     }
-    document.getElementById("debug").textContent = `${fovDegrees.toPrecision(
-      3
-    )} walls: ${walls} V: ${vFlocking}`;
+    // document.getElementById("debug").textContent = `${fovDegrees.toPrecision(
+    //   3
+    // )}`;
 
     if (!debugging) {
       colorMode(HSB);
@@ -253,19 +247,27 @@ class Boid {
       pop();
     } else {
       this.ROTATION_ANGLE = theta + HALF_PI;
+      if (fovDegrees < 330) {
+        push();
+        fill(0);
+        stroke(10);
+        translate(this.pos.x, this.pos.y);
+        rotate(this.ROTATION_ANGLE);
+        arc(
+          0,
+          0,
+          2 * this.ARC_RADIUS,
+          2 * this.ARC_RADIUS,
+          -fovRads / 2,
+          +fovRads / 2
+        );
+        pop();
+      }
       push();
       translate(this.pos.x, this.pos.y);
-      rotate(this.ROTATION_ANGLE);
-      fill(255, 255, 255, 10);
-      stroke(10);
-      arc(
-        0,
-        0,
-        2 * this.ARC_RADIUS,
-        2 * this.ARC_RADIUS,
-        -+fovValue / 2,
-        +fovValue / 2
-      );
+      fill(255, 0, 0, 10);
+      noStroke();
+      ellipse(0, 0, this.ARC_RADIUS * 2);
       pop();
       point(mouseX, mouseY);
       push();
@@ -287,9 +289,9 @@ class Boid {
         this.pos.y,
         this.ARC_RADIUS,
         this.ROTATION_ANGLE,
-        +fovValue
+        +fovRads
       );
-      if (hit) print("colliding? " + hit);
+      if (hit) print("colliding? " + hit, fovRads);
       strokeWeight(1);
       noFill();
     }

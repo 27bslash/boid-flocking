@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Boids</title>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.min.js"></script>
+    <script
+      src="https://kit.fontawesome.com/452aecdbf8.js"
+      crossorigin="anonymous"
+    ></script>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -14,44 +18,98 @@
     <script src="quadtree.js"></script>
     <script src="sketch.js"></script>
     <h3 id="fps"></h3>
-    <div id="control">
-      <button onclick="dropDown()">
-        dropdown
-      </button>
-      <button class="toggle-button" onclick="toggle('debug')">D</button>
-      <input
-        type="range"
-        min="0"
-        max="5"
-        value="0"
-        step="1"
-        oninput="addPredators(this.value)"
-        class="slider"
-        id="predatorSlider"
-      />
-      <h3 class="debug-info" id="debug"></h3>
-      <input
-        type="range"
-        min="0"
-        max="4"
-        value="0"
-        oninput="fovChange(this.value)"
-        class="slider"
-        step="0.001"
-        id="fovSlider"
-      />
-      <input
-        type="range"
-        min="0"
-        max="5"
-        value="0"
-        class="slider"
-        id="speedSlider"
-      />
-      <button class="toggle-button" onclick="toggle('walls')">walls</button>
-      <button class="toggle-button" onclick="toggle('vf')">
-        V Flocking
-      </button>
+    <h3 id="debug"></h3>
+    <div id="control" class="control">
+      <h3 class="settings">Settings</h3>
+      <i id="menu" class="fas fa-bars" onclick="dropDown()"></i>
+      <div class="col-1">
+        <label> Debug</label>
+      </div>
+      <div class="col-2">
+        <input
+          type="checkbox"
+          class="toggle-button"
+          onclick="toggle('debug')"
+        />
+      </div>
+      <div class="col-1">
+        <label id="numOfBoids-label">
+          num of Boids
+        </label>
+      </div>
+      <div class="col-2">
+        <input
+          type="range"
+          min="0"
+          max="500"
+          value="numOfBoids"
+          step="1"
+          oninput="addBoids(this.value)"
+          class="slider"
+          id="boidSlider"
+        />
+      </div>
+      <div class="col-1">
+        <label id="predator-label">
+          Predators
+        </label>
+      </div>
+      <div class="col-2">
+        <input
+          type="range"
+          min="0"
+          max="5"
+          value="0"
+          step="1"
+          oninput="addPredators(this.value)"
+          class="slider"
+          id="predatorSlider"
+        />
+      </div>
+      <div class="col-1">
+        <label id="fov-label">
+          FOV
+        </label>
+      </div>
+      <div class="col-2">
+        <input
+          type="range"
+          min="130"
+          max="360"
+          value="360"
+          oninput="fovChange(this.value)"
+          class="slider"
+          step="0.001"
+          id="fovSlider"
+        />
+      </div>
+
+      <!-- <div class="col-1">
+        <label>
+          <input
+            type="range"
+            min="0"
+            max="5"
+            value="0"
+            class="slider"
+            id="speedSlider"
+          />
+        </label>
+      </div> -->
+      <div class="col-2">
+        <label>Walls</label>
+      </div>
+      <input type="checkbox" class="toggle-button" onclick="toggle('walls')" />
+      <div class="col-1">
+        <label>V-Flocking</label>
+      </div>
+      <div class="col-2">
+        <input type="checkbox" class="toggle-button" onclick="toggle('vf')" />
+      </div>
+      <div class="col-1">
+        <label>Quad Tree</label>
+      </div>
+      <input type="checkbox" class="toggle-button" onclick="toggle('grid')" />
     </div>
   </body>
 </html>
